@@ -3,7 +3,7 @@
 This repository is the official implementation of [On Expressive Power of Looped Transformers: Theoretical Analysis and Enhancement via Timestep Encoding](https://arxiv.org/abs/2410.01405).
 In this paper, we establish the approximation rate of Looped Transformers by defining the modulus of continuity for sequence-to-sequence functions. This reveals a limitation specific to the looped architecture. That is, the analysis prompts the incorporation of scaling parameters for each loop, conditioned on timestep encoding.
 
-### Install
+### Setup
 
 ```shell
 pip install torch numpy transformers datasets tiktoken wandb tqdm
