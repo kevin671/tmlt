@@ -1,20 +1,17 @@
 # config for training GPT-2 (124M) down to very nice loss of ~2.85 on 1 node of 8X A100 40GB
 # launch as the following (e.g. in a screen session) and wait ~5 days:
 # $ torchrun --standalone --nproc_per_node=8 train.py config/train_gpt2.py
+model_type = "gpt"
 
 wandb_log = True
-wandb_project = "owt"
+wandb_project = "tmlt"
+wandb_run_name = "gpt2-124M"
 
-model_type = "gpt2"
 # these make the total batch size be ~0.5M
 # 12 batch size * 1024 block size * 5 gradaccum * 8 GPUs = 491,520
-batch_size = 12
+batch_size = 12 * 8
 block_size = 1024
-gradient_accumulation_steps = 5 * 4
-
-n_head = 12
-n_embd = 768
-n_layer = 12
+gradient_accumulation_steps = 5
 
 # this makes total number of tokens be 300B
 max_iters = 600000
@@ -27,7 +24,3 @@ log_interval = 10
 
 # weight decay
 weight_decay = 1e-1
-
-init_from = "scratch"  # "resume"
-
-wandb_run_name = f"{model_type}-{n_layer}-layer-{n_embd}-embd-{n_head}-heads"
