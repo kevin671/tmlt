@@ -9,7 +9,7 @@ In this paper, we establish the approximation rate of Looped Transformers by def
 pip install torch numpy transformers datasets tiktoken wandb tqdm
 ```
 
-### Training WikiText-103
+### Training on WikiText-103
 
 Train a standard GPT model following [nanoGPT](https://github.com/karpathy/nanoGPT):
 ```bash
