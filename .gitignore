@@ -6,3 +6,4 @@ downloads
 wandb
 tmp
 out
+.venv
