@@ -1,4 +1,4 @@
-# On Expressive Power of Looped Transformers: Theoretical Analysis and Enhancement via Timestep Encoding
+# Timestep-Modulated Looped Transformer (TMLT)
 
 This repository is the official implementation of [On Expressive Power of Looped Transformers: Theoretical Analysis and Enhancement via Timestep Encoding](https://arxiv.org/abs/2410.01405).
 
