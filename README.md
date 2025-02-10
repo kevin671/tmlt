@@ -29,7 +29,7 @@ Experimental results validate the theoretical results, showing that increasing t
 </div>
 
 
-### Acknowledgement
+## Acknowledgement
 
 - [nanoGPT](https://github.com/karpathy/nanoGPT)
 - [DiT](https://github.com/facebookresearch/DiT)
