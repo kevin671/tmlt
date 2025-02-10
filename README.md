@@ -16,7 +16,7 @@ Train a standard GPT model following [nanoGPT](https://github.com/karpathy/nanoG
 python train.py config/train_gpt2.py
 ```
 
-Train a Looped Transformer with or without Timestep Encoding:
+Train a Looped Transformer with or without timestep encoding:
 ```bash
 python train.py config/train_lt.py
 python train.py config/train_tmlt.py
