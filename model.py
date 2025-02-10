@@ -1,8 +1,9 @@
+import inspect
 import math
+
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
-import inspect
 
 
 class SelfAttention(nn.Module):

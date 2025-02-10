@@ -1,3 +1,8 @@
+__pycache__
 *.sh
 *.bin
 downloads
+*.o*
+wandb
+tmp
+out
