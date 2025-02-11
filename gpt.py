@@ -128,7 +128,7 @@ class Config:
     is_causal: bool = True
 
     # extra config for the Looped Transformer
-    n_loop: int = 100
+    n_loop: int = 6
 
 
 class GPT(nn.Module):

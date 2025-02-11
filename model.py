@@ -11,7 +11,10 @@ class SelfAttention(nn.Module):
     def __init__(self, config):
         super().__init__()
         assert config.n_embd % config.n_head == 0
-        self.c_attn = nn.Linear(config.n_embd, 3 * config.n_embd, bias=config.bias)
+        # self.c_attn = nn.Linear(config.n_embd, 3 * config.n_embd, bias=config.bias)
+        self.q = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+        self.k = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
+        self.v = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
         self.c_proj = nn.Linear(config.n_embd, config.n_embd, bias=config.bias)
         self.attn_dropout = nn.Dropout(config.dropout)
         self.resid_dropout = nn.Dropout(config.dropout)
@@ -21,10 +24,21 @@ class SelfAttention(nn.Module):
         self.is_causal = config.is_causal
         self.flash = hasattr(torch.nn.functional, "scaled_dot_product_attention")
 
-    def forward(self, x, key_padding_mask=None):
-        B, T, C = x.size()
+    def forward(
+        self, q_src: torch.Tensor, k_src: torch.Tensor = None, v_src: torch.Tensor = None, key_padding_mask=None
+    ):
+        if k_src is None:
+            k_src = q_src
+        if v_src is None:
+            v_src = q_src
+        B, T, C = q_src.size()
+        q = self.q(q_src)
+        k = self.k(k_src)
+        v = self.v(v_src)
+        # def forward(self, x, key_padding_mask=None):
+        # B, T, C = x.size()
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
-        q, k, v = self.c_attn(x).split(self.n_embd, dim=2)
+        # q, k, v = self.c_attn(x).split(self.n_embd, dim=2)
         k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)  # (B, nh, T, hs)
         q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)  # (B, nh, T, hs)
         v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2)  # (B, nh, T, hs)
@@ -75,7 +89,7 @@ class LoopedGPT(nn.Module):
                 attn=SelfAttention(config),
                 mlp=MLP(config),
                 norm1=nn.RMSNorm(config.n_embd, elementwise_affine=False),
-                norm2=nn.RMSNorm(config.n_embd, elementwise_affine=False),
+                # norm2=nn.RMSNorm(config.n_embd, elementwise_affine=False),
                 ln_f=nn.RMSNorm(config.n_embd),
             )
         )
@@ -108,8 +122,11 @@ class LoopedGPT(nn.Module):
         pos_emb = self.transformer.wpe(pos)  # position embeddings of shape (t, n_embd)
         x = self.transformer.drop(tok_emb + pos_emb)
         for _ in range(self.n_loop):
-            x = x + self.transformer.attn(self.transformer.norm1(x))
-            x = x + self.transformer.mlp(self.transformer.norm2(x))
+            x_norm = self.transformer.norm1(x)
+            x = x + self.transformer.attn(x_norm, x_norm, x)
+            # x = x + self.transformer.attn(self.transformer.norm1(x))
+            # x = x + self.transformer.mlp(self.transformer.norm2(x))
+            x = x + self.transformer.mlp(x)
         x = self.transformer.ln_f(x)
 
         if targets is not None:
@@ -193,6 +210,7 @@ class TimestepEmbedder(nn.Module):
 class TMLT(LoopedGPT):
     def __init__(self, config):
         super().__init__(config)
+        self.transformer["norm2"] = nn.RMSNorm(config.n_embd, elementwise_affine=False)
         self.timestep_embedder = TimestepEmbedder(config.n_embd)
         self.adaLN_modulation = nn.Sequential(nn.SiLU(), nn.Linear(config.n_embd, 4 * config.n_embd, bias=True))
         nn.init.zeros_(self.adaLN_modulation[1].weight)
