@@ -13,11 +13,6 @@ pip install torch numpy transformers datasets tiktoken wandb tqdm
 
 ### Training on WikiText-103
 
-Train a standard GPT model following [nanoGPT](https://github.com/karpathy/nanoGPT):
-```bash
-python train.py config/train_gpt2.py
-```
-
 Train a Looped Transformer with or without timestep encoding:
 ```bash
 python train.py config/train_lt.py
