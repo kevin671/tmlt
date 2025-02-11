@@ -21,8 +21,9 @@ python train.py config/train_tmlt.py
 
 Experimental results validate the theoretical results, showing that increasing the number of loops enhances performance, with further gains achieved through the timestep encoding.
 
-<div style="text-align: center; margin: 20px 0;">
-  <img src="assets/train_loss.png" width="1000">
+<div style="display: flex; justify-content: center; gap: 10px; margin: 10px 0;">
+  <img src="assets/train_p.png" width="500">
+  <img src="assets/val_p.png" width="500">
 </div>
 
 
