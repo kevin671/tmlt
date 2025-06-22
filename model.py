@@ -124,8 +124,10 @@ class LoopedGPT(nn.Module):
         for _ in range(self.n_loop):
             x_norm = self.transformer.norm1(x)
             x = x + self.transformer.attn(x_norm, x_norm, x)
-            # x = x + self.transformer.attn(self.transformer.norm1(x))
-            # x = x + self.transformer.mlp(self.transformer.norm2(x))
+            # NOTE: We found a bug. In the experiments reported in the paper, we mistakenly used `x` as the value input to attention.
+            # The correct implementation should be: `x = x + self.transformer.attn(x_norm, x_norm, x_norm)`
+            # For reproducibility, we retain the original version used in the experiments.
+            # Correcting this for potentially improved performance.
             x = x + self.transformer.mlp(x)
         x = self.transformer.ln_f(x)
 
